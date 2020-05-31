@@ -67,7 +67,7 @@ namespace Interface
     {
         static void Main()
         {
-            Employee employee = new Employee("Asulbek","Programmer");
+            Employee employee = new Employee("","Programmer");
             employee.Display();
             Console.Read();
         }
