@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DocumentFormat.OpenXml.ExtendedProperties;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -122,77 +123,171 @@ namespace Interface
     #endregion
 
     #region try catch finnaly
-    class Program
+    //class Program
+    //{
+    //    private static int y,x;
+
+    //    public static void Main()
+    //    {
+    //        try
+    //        {
+    //            int x = 5;
+    //            int y = x / 1;
+    //            Console.WriteLine(Math.Sqrt(5));
+
+    //            Person person = new Person("AsekeSAFDSCSDVFDVDSVER", 15, message: "");
+    //            person.Display();
+    //        }
+    //        catch (Exception ex) when (y == 0 && x == 0)
+    //        {
+    //            Console.WriteLine(ex.Message);
+    //        }
+    //        Console.Read();
+    //    }
+    //}
+
+    //internal class Person:Exception
+    //{
+    //    private int age;
+    //    private string name;
+    //    internal string Name {set
+    //        {
+    //            if (value.Length > 12)
+    //            {
+    //                throw new Exception("Tne name can't more than 12 simvols");
+    //            }
+    //            else
+    //            {
+    //                name = value;
+    //            }
+    //        }
+    //        get
+    //        {
+    //            return name;
+    //        }
+    //    }
+    //    internal int Age {
+    //        set
+    //        {
+    //            if (value <= 18)
+    //            {
+    //                throw new Exception("The age can't be min 18");
+    //            }
+    //            else
+    //            {
+    //                age = value;
+    //            }
+    //        }
+    //        get { return age; }
+    //    }
+
+    //    internal Person(string name,int age,string message):base(message)
+    //    {
+    //        Name = name;
+    //        Age = age;
+    //    }
+
+    //    public Person(string message, int v) : base(message)
+    //    {
+    //    }
+
+    //    internal virtual void Display()
+    //    {
+    //        Console.WriteLine($"Name:{Name} \tAge:{Age}");
+    //    }
+    //}
+    #endregion
+    #region Interface
+    interface IAccount
     {
-        private static int y,x;
+        int CurrentSum { get; }  // Текущая сумма на счету
+        void Put(int sum); // Положить деньги на счет
+        void Withdraw(int sum); // Взять со счета
 
-        public static void Main()
+        void Movie(); // метод для явной реализация
+    }
+    interface IClient
+    {
+        string Name { get; set; }
+    }
+    class Client : IClient, IAccount
+    {
+        int _sum;
+        public string Name { get; set; }
+
+        public int CurrentSum { get { return _sum; } }
+
+        public void Put(int sum)
         {
-            try
-            {
-                int x = 5;
-                int y = x / 1;
-                Console.WriteLine(Math.Sqrt(5));
+            _sum += sum;
+        }
 
-                Person person = new Person("AsekeSAFDSCSDVFDVDSVER", 15, message: "");
-                person.Display();
-            }
-            catch (Exception ex) when (y == 0 && x == 0)
+        public void Withdraw(int sum)
+        {
+            if (_sum >= sum)
             {
-                Console.WriteLine(ex.Message);
+                _sum -= sum;
             }
-            Console.Read();
+        }
+        void IAccount.Movie() // метод для явной реализация
+        {
+            Console.WriteLine("Movie");
+        }
+       public Client(string name, int sum)
+        {
+            Name = name;
+            _sum = sum;
         }
     }
 
-    internal class Person:Exception
+
+   public interface ICloneable // Копирование объектов. Интерфейс ICloneable
     {
-        private int age;
-        private string name;
-        internal string Name {set
-            {
-                if (value.Length > 12)
-                {
-                    throw new Exception("Tne name can't more than 12 simvols");
-                }
-                else
-                {
-                    name = value;
-                }
-            }
-            get
-            {
-                return name;
-            }
-        }
-        internal int Age {
-            set
-            {
-                if (value <= 18)
-                {
-                    throw new Exception("The age can't be min 18");
-                }
-                else
-                {
-                    age = value;
-                }
-            }
-            get { return age; }
-        }
+        object Clone();
+    }
 
-        internal Person(string name,int age,string message):base(message)
+    class Person:ICloneable //Копирование объектов. Интерфейс ICloneable
+    {
+        public string Name { get; set; }
+        public int Age { get; set; }
+        public Company Work { get; set; }
+        public object Clone()
         {
-            Name = name;
-            Age = age;
-        }
 
-        public Person(string message, int v) : base(message)
-        {
+            Company _company = new Company { Name = this.Work.Name };
+            new Person
+            {
+                Name = this.Name,
+                Age = this.Age,
+                Work = _company
+            };
+            return this.MemberwiseClone();
         }
-
-        internal virtual void Display()
+    } 
+    class Company
+    {
+        public string Name { get; set; }
+    }
+    class Program
+    {
+        public static void Main()
         {
-            Console.WriteLine($"Name:{Name} \tAge:{Age}");
+            Client client = new Client("Asulbek",2000000);
+            client.Put(100000);
+            Console.WriteLine(client.CurrentSum);
+            client.Withdraw(1500000);
+            Console.WriteLine($"Ostatok na c4ete:{client.CurrentSum}");
+
+            ((IAccount)client).Movie(); //необходимо приведение к типу IAccount
+
+
+            #region Копирование объектов. Интерфейс ICloneable
+            Person person = new Person { Name = "Asylbek", Age = 22, Work = new Company { Name = "Microsoft" } };
+            Console.WriteLine(person.Work.Name);
+            Person person1 = new Person { Name = "Madiyar", Age = 22, Work = new Company { Name = "Apple" } };
+            Console.WriteLine(person1.Work.Name);
+            #endregion
+            Console.Read();
         }
     }
     #endregion
